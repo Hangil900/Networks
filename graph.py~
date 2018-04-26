@@ -1,0 +1,19 @@
+
+
+class Graph():
+
+    def __init__(self, edges, num_nodes):
+        self.size = num_nodes
+        self.edge_size = len(edges)
+        self.distM = None
+        
+        self.M = [[None for i in range(num_nodes)] for j in range(num_nodes)]
+        for (i, j, w) in edges:
+            self.M[i][j] = w
+            self.M[j][i] = w
+
+
+    def __get_distance_matrix(self):
+    
+        
+            

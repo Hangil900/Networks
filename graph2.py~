@@ -1,0 +1,38 @@
+import copy, pickle, os, config, pdb
+import numpy as np
+from subgraph import Subgraph
+
+class Graph():
+
+    def __init__(self, size, nodes, edges, name):
+
+        self.size = size
+        self.nodeThetas = {}    # Key = node id, value = theta.
+        self.edges = [ [] for i in range(size)]    # indexed by id, list of neighbor ids.
+        self.distM = None
+        self.name = name
+
+        # Rename the nodes so ids go from 0 to size.
+        count = 0
+        idToNum = {}
+        for nodeId, theta in nodes:
+            idToNum[nodeId] = count
+            self.nodeThetas[count] = theta
+            count += 1
+
+        for i, j, p in edges:
+            self.edges[idToNum[i]].append(idToNum[j])
+
+        self.__get_distance_matrix()
+
+
+    def __get_clusters(self, theta):
+
+        visited = set()
+        stack = []
+
+        for nodeId in range(size):
+
+            if nodeId not in visited and self.
+            
+        
