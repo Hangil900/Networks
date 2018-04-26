@@ -1,5 +1,5 @@
 
-import graph2, config, pdb
+import graph, config, pdb
 import random, csv, pickle
 import numpy as np
 
@@ -108,7 +108,7 @@ def run():
 
     # Construct initial network graph.
     size, nodes, edges = get_enron_data()
-    G = graph2.Graph(size, nodes, edges)
+    G = graph.Graph(size, nodes, edges)
 
     for theta in np.linspace(0.1, 0.9, 17):
         SG =  G.get_largest_cluster_subgraph(theta)
