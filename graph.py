@@ -10,9 +10,13 @@ class Graph():
         self.size = size
         self.nodeThetas = {}    # Key = node id, value = theta.
         self.edges = [ [] for i in range(size)]    # indexed by id, list of neighbor ids.
-        self.distM = None # size x size matrix of distances.
+        self.distM = None # size x size matrix of distances. Distance metric counting each edge as dist 1.
+        self.distMP = None # distance metric with regard to 1/ edge prob.
+        self.distMP2 = None # Distance metric when using constant prob on all edges
+        
         self.name = name
         self.edgeProb = {} # (i,j) edge indexes the edge probability.
+        self.all_paths = None
 
         # Rename the nodes so ids go from 0 to size.
         count = 0
@@ -25,6 +29,9 @@ class Graph():
         for i, j, p in edges:
             self.edges[idToNum[i]].append(idToNum[j])
             self.edgeProb[(idToNum[i], idToNum[j])] = p
+
+            self.edges[idToNum[j]].append(idToNum[i])
+            self.edgeProb[(idToNum[j], idToNum[i])] = p
 
 
     # Returns clusters in the graph based on the theta value input.
@@ -129,13 +136,18 @@ class Graph():
         size = self.size
         #self.distM = np.zeros(shape= (size, size))
         self.distM = [[0]* size for i in range(size)]
+        self.distMP = [[0]* size for i in range(size)]
 
         for i in range(size):
             for j in range(size):
                 if j in self.edges[i]:
-                    self.distM[i][j] = 1.0 / self.edgeProb[(i,j)]
+                    self.distMP[i][j] = 1.0 / self.edgeProb[(i,j)]
                 else:
-                    self.distM[i][j] = 1 / 0.01    # Approximation for what "infinity is"
+                    self.distMP[i][j] = 1 / 0.01    # Approximation for what "infinity is"
+                if j in self.edges[i]:
+                    self.distM[i][j] = 1.0
+                else:
+                    self.distM[i][j] = size +1   # Approximation for what "infinity is"
 
         for k in range(size):
             for i in range(size):
@@ -143,6 +155,23 @@ class Graph():
                     if (self.distM[i][k] + self.distM[k][j] < self.distM[i][j]):
                         self.distM[i][j] = self.distM[i][k] + self.distM[k][j]
 
+                    if (self.distMP[i][k] + self.distMP[k][j] < self.distMP[i][j]):
+                        self.distMP[i][j] = self.distMP[i][k] + self.distMP[k][j]
+
+        for i in range(size):
+            for j in range(size):
+                if self.distM[i][j] == size + 1:
+                    self.distM[i][j] = None
+
+    def calculate_distance_matrix_with_prob(self, p):
+        self.distMP2 = [[0]* self.size for i in range(self.size)]
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.distM[i][j] == None:
+                    self.distMP2[i][j] = None
+                else:
+                    self.distMP2[i][j] = 1.0 /(p ** self.distM[i][j])
+        
             
     # Function to reset edge probabilities based on input distribution function.
     def set_edge_probabilities(self, func):
@@ -165,5 +194,63 @@ class Graph():
                         edges[j].append(i)
 
         return Subgraph(edges, inner, outer)
+
+    def __get_all_paths(self, node, paths, visited, depth):
+        if node in visited:
+            return
+
+        if node in paths:
+            paths[node].append(depth)
+        else:
+            paths[node] = [depth]
+
+        visited.add(node)
+        for j in self.edges[node]:
+            self.__get_all_paths(j, paths, visited, depth+1)
+        visited.remove(node)
+        return
+        
+
+    def calculate_all_paths(self):
+        paths = []
+
+        for i in range(self.size):
+            print i
+            node_paths = {}
+            visited = set()
+            visited.add(i)
+            for j in self.edges[i]:
+                self.__get_all_paths(j, node_paths, visited, 1)
+
+            paths.append(node_paths)
+
+        self.all_paths = paths
+
+
+
+if __name__ == '__main__':
+    edges = [(0,2, 1),
+             (1,2,1),
+             (1,3,1),
+             (2,3,1),
+             (2,4,1),
+             (3,4,1),
+             (4,5,1),]
+
+    nodes = [(0,1),
+             (1,1),
+             (2,1),
+             (3,1),
+             (4,1),
+             (5,1)]
+
+    size = 6
+
+    G = Graph(size, nodes, edges)
+
+    G.calculate_all_paths()
+
+    print G.all_paths
+        
 
     
