@@ -1,0 +1,17 @@
+\section{User dissatisfaction function}\label{sec:udf}
+Prior work by \cite{o2015smarter}, \cite{raviv2013optimal}, and \cite{schuijbroek2013inventory} defines a \emph{user dissatisfaction function} (UDF) that uses demand information to map the number of bikes at a station at the beginning of a time interval to the expected number of customers not be able to access/leave the system at that station over the course of the interval. % This function is often referred to as \emph{user dissatisfaction function}.
+
+The user dissatisfaction function is based on an $M/M/1/\kappa$ queue at each station $s$, in which the state of the queue $X_s(t)$ at time $t$ corresponds to the number of bikes in the station at that time. More precisely, there are two Poisson processes with rates $\mu$ and $\lambda$. Both rates can be functions of time, but they are assumed to be exogeneous and independent of the operator's actions. An arrival of the Poisson process with rate $\mu$ moves the state of the queue from $i$ to $i-1$ if $i>0$. If $i =0$, the state of the queue does not change. This represents the arrival of a user who wants to pick up a bike but cannot due to a lack of available bikes. We assume that such a customer leaves the system dissatisfied. Similarly, an arrival of the Poisson process with rate $\lambda$ moves the state of the queue from $i$ to $i+1$ if $i<\kappa$. If $i =\kappa$, the state of the queue does not change; the user is also dissatisfied in this case as she cannot drop off her bike due to a lack of available docks. The UDF $F_s$ uses these Poisson processes to map an initial number of bikes to the expected number of such dissatisfied users over a given finite time horizon (cf. Figure \ref{fig:cost_curves}). In prior work, \cite{o2015smarter}, \cite{raviv2013optimal}, and \cite{schuijbroek2013inventory}, mentioned above, it was shown that $F_s(\cdot)$ is convex and can be efficiently computed for time-invariant $\lambda$ and $\mu$. In latter work a dynamic program was derived to extend those methods to time-varying rates \cite{parikh2014estimation}. To obtain values for $\lambda$ and $\mu$ we use the decensoring method introduced in \cite{o2015data}. % For simplicity, we linearize this function in our integer program (cf. figure \ref{fig:linearizeIP}) and obtain for each station $s$ a coefficient $f(s)$.
+
+Based on these user dissatisfaction functions, the authors of \cite{raviv2013static} define a routing problem to optimize the truck routes relocating bikes in preparation for the morning rush hour. However, their solution methods are only applicable to at most three trucks and systems with at most 60 stations. In addition, their IP cannot account for the time it takes to stop at each station. We expand upon this formulation and use pre-processing to handle Citi Bike's rebalancing in Manhattan with 360 stations. %NYC's larger system, which has over 400 stations. %Mention further that they did not have time-cost for stopping
+
+%given an initial number of bikes
+
+\begin{figure}
+\centering
+\includegraphics[width=70mm]{CCvisualizations.png}
+\caption{User dissatisfaction function for four stations, with different demand patterns, in NYC for 7AM-10PM.}
+\label{fig:cost_curves}
+\end{figure}
+
+\vspace{-.5in}

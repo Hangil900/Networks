@@ -1,0 +1,57 @@
+The focus on incentive schemes over intervals is motivated by the theorem we present in this section;  intuitively, the theorem gives conditions under which it is optimal, in the fluid model, to only incentivize during at most two intervals of the day (one for rentals, one for returns). We first state the condition under which the above fails and then prove that it otherwise holds. Next, we evaluate through data the extent to which the condition in the theorem holds true in the Citi Bike system. Finally, we use extensive simulations to compare the result in the fluid setting with that in continuous-time Markov chain models.
+
+\subsection{Theorem} 
+\label{ssec:theorem}
+
+
+\textbf{Asymetric Condition.} Suppose we are given a capacity $K$, an initial number of bikes $b$, rates $\mu(t)$ and $\lambda(t)$ for rentals and returns without incentivizing and corresponding rates $\hat{\mu}(t)$ and $\hat{\lambda}(t)$ for rentals and returns with incentivizing. Then, the \emph{asymetric condition} holds unless either there exist $t_1<t_2<t_3<t_4<t_5<t_6$ such that
+\[
+\min\{
+b+\int_{t_1}^{t_2} \lambda(t)-\mu(t)dt,
+\int_{t_3}^{t_4} \mu(t)-\lambda(t)dt,
+\int_{t_5}^{t_6} \lambda(t)-\mu(t)dt
+\}
+\geq K
+\]
+or there exist $t_1<t_2<t_3<t_4<t_5<t_6$ such that
+\[
+\min\{
+K-b+\int_{t_1}^{t_2} \mu(t)-\lambda(t)dt,
+\int_{t_3}^{t_4} \lambda(t)-\mu(t)dt,
+\int_{t_5}^{t_6} \mu(t)-\lambda(t)dt
+\}
+\geq K.
+\]
+
+\textbf{Incentives help weakly.} We assume that (i) incentivizing rentals (return) at a station yields a higher rate of rentals (returns) than not doing so and (ii) it does not change the sign of the net-flow at the station, that is, a station that loses bikes (on average) continues to do so (on average) even with incentives.  $(\hat{\mu}(t)-\lambda(t))(\mu(t)-\lambda(t))> 0$ and $(\mu(t)-\hat{\lambda}(t))(\mu(t)-\lambda(t))> 0$.
+
+
+\textbf{Lemma.}
+%\begin{lemma}
+Suppose for given data that both conditions hold. Then, in the fluid model, there exist $T_s, T_S, T_s',T_S'$ such that it is optimal to incentivize rentals during $(T_s,T_S)$ and returns during $(T_s', T_S')$.
+%\end{lemma}
+
+\emph{Lemma.}
+%\begin{proof}
+We argue by contradiction. Consider a set of intervals $(s_1,S_1),\ldots,(s_k,S_k)$ such that incentivizing rentals during $(s_j,S_j)$ for even $j$ and incentivizing returns during $(s_j,S_j)$ for odd $j$ (i) is  optimal, (ii) subject to (i) $k$ is minimized, (iii) subject to (i) and (ii) $S_2-s_1$ is minimized, and (iv) subject to (i)-(iii) $S_3-s_2$ is minimized. Notice by symmetry of rentals and returns that flipping the odd and even intervals in (i) does not affect the argument. Further, the case that it is optimal to incentivize returns (rentals) in two consecutive intervals is excluded by the two conditions combined with the intervals being chosen such that $k$ is minimized. We aim to show that the above lead to a contradiction with the asymmetric condition.
+
+Notice that (iii) implies in particular that for any $\epsilon, \epsilon'>0$ it must be strictly worse to incentivize returns from $s_1+\epsilon$ to $S_1+\epsilon'$ instead of $s_1$ to $S_1$; by the assumption that incentives help weakly, there must exist arbitrarily small such $\epsilon,\epsilon'$ such that incentivizing returns from $s_1+\epsilon$ to $S_1+\epsilon'$ gives the same total increase in returns as from $s_1$ to $S_1$, yet decreases by $\epsilon$ the difference between the end of the second and the beginning of the first interval. By (iii), this implies that doing so would give a strictly smaller objective. We claim that this also implies that the fluid must be empty at least once at a time $T\in(s_1,S_1)$. Indeed, suppose it were the case that the fluid never hits 0 in $[s_1,S_1]$. If it never hits $K$ either, then there  exists sufficiently small $\epsilon'$ such that no cost is incurred in $[s_1,S_1+\epsilon']$ and we could set  $\epsilon,\epsilon'>0$ such that incentivizing returns from $s_1+\epsilon$ to $S_1+\epsilon'$ gives the same fluid level of bikes at time $S_1+\epsilon'$ we would have when incentivizing in $(s_1,S_1)$ -- a contradiction to (ii). Else, it does hit $K$ but does not incur a cost at that point (not incentivizing returns at that point would be better, so incurring a cost would violate (i)); in that case, there is again no censoring, so incentivizing returns in $(s_1+\epsilon,S_1+\epsilon')$ can be no worse. 
+
+TODO this last part of the argument is unclear
+
+Thus, it must be the case that the fluid model with the incentives set by the policy is empty at a time $T\in(s_1,S_1)$. In particular, this implies that with $t_1=0, t_2=T$ it is the case that $\int_{t_1}^{t_2} \mu(t)-\lambda(t)dt\geq b$.
+
+By the same reas
+
+%By the same reasoning as before, there must be a time $T'\in(s_2,S_2)$ when the fluid model must have the station be full, implying that with $t_3 = T, t_4=T'$ we have $\int_{t_3}^{t_4}\lambda(t)-\mu(t)\geq K$.
+
+Again with the same reasoning, we find that there is a time $T''\in(s_3,S_3)$ where the station must be empty, so with $t_5=T'$ and $t_6=T''$ we have $\int_{t_5}^{t_6} \mu(t)-\lambda(t)dt\geq K$. As such, the $t_1,\ldots,t_6$ contradict the asymmetric condition and thus imply the lemma statement.
+
+%Thus, with there must exist two intervals that minimize
+ 
+%\end{proof}
+
+
+\subsection{Verification of Condition}
+
+\subsection{Fluid vs. Continuous-time Markov chain}

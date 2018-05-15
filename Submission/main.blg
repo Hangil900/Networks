@@ -1,0 +1,72 @@
+This is BibTeX, Version 0.99d (TeX Live 2017)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+The style file: SIGCHI-Reference-Format.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: references.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty publisher in banerjee2017pricing
+Warning--empty address in banerjee2017pricing
+Warning--empty publisher in banerjee2015pricing
+Warning--empty address in banerjee2015pricing
+Warning--no journal in chen2017pricing
+Warning--no number and no volume in chen2017pricing
+Warning--page numbers missing in both pages and numpages fields in chen2017pricing
+Warning--empty address in frehenshm17
+Warning--no number and no volume in fricker2012incentives
+Warning--empty publisher in jianetal
+Warning--empty address in jianetal
+Warning--empty publisher in merugu2009incentive
+Warning--empty address in merugu2009incentive
+Warning--page numbers missing in both pages and numpages fields in merugu2009incentive
+Warning--empty publisher in o2015data
+Warning--empty address in o2015data
+Warning--no number and no volume in parikh2014estimation
+Warning--page numbers missing in both pages and numpages fields in parikh2014estimation
+Warning--unrecognized DOI value [https://doi.org/10.1016/j.ejor.2016.08.029]
+Warning--empty publisher in singla2015incentivizing
+Warning--empty address in singla2015incentivizing
+Warning--no number and no volume in Waserhole2014
+You've used 25 entries,
+            5283 wiz_defined-function locations,
+            1354 strings with 18441 characters,
+and the built_in function-call counts, 23299 in all, are:
+= -- 3165
+> -- 711
+< -- 1
++ -- 221
+- -- 381
+* -- 1463
+:= -- 2440
+add.period$ -- 129
+call.type$ -- 25
+change.case$ -- 163
+chr.to.int$ -- 23
+cite$ -- 46
+duplicate$ -- 1862
+empty$ -- 1334
+format.name$ -- 312
+if$ -- 5679
+int.to.chr$ -- 3
+int.to.str$ -- 0
+missing$ -- 79
+newline$ -- 214
+num.names$ -- 150
+pop$ -- 762
+preamble$ -- 1
+purify$ -- 261
+quote$ -- 0
+skip$ -- 503
+stack$ -- 0
+substring$ -- 2171
+swap$ -- 166
+text.length$ -- 262
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 225
+warning$ -- 22
+while$ -- 158
+width$ -- 0
+write$ -- 367
+(There were 22 warnings)

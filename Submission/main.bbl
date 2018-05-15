@@ -1,0 +1,250 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{00}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{{\tt DOI:}\penalty0{#1}\ }
+  \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       #1{#1}          \fi
+
+\bibitem{banerjee2017pricing}
+{Siddhartha Banerjee}, {Daniel Freund}, {and} {Thodoris Lykouris}. 2017.
+\newblock \showarticletitle{Pricing and Optimization in Shared Vehicle Systems:
+  An Approximation Framework}. In {\em Proceedings of the 2017 ACM Conference
+  on Economics and Computation}. ACM, 517--517.
+\newblock
+
+
+\bibitem{banerjee2015pricing}
+{Siddhartha Banerjee}, {Ramesh Johari}, {and} {Carlos Riquelme}. 2015.
+\newblock \showarticletitle{Pricing in ride-sharing platforms: A
+  queueing-theoretic approach}. In {\em Proceedings of the Sixteenth ACM
+  Conference on Economics and Computation}. ACM, 639--639.
+\newblock
+
+
+\bibitem{chen2017pricing}
+{Yiwei Chen} {and} {Ming Hu}. 2017.
+\newblock \showarticletitle{Pricing and matching with forward-looking buyers
+  and sellers}.
+\newblock  (2017).
+\newblock
+
+
+\bibitem{forma20153}
+{Iris~A Forma}, {Tal Raviv}, {and} {Michal Tzur}. 2015.
+\newblock \showarticletitle{A 3-step math heuristic for the static
+  repositioning problem in bike-sharing systems}.
+\newblock {\em Transportation Research Part B: Methodological\/}  {71} (2015),
+  230--247.
+\newblock
+
+
+\bibitem{frehenshm17}
+{Daniel Freund}, {Shane~G. Henderson}, {and} {David~B. Shmoys}. 2017.
+\newblock \showarticletitle{Minimizing multimodular functions and allocating
+  capacity in bike-sharing systems}. In {\em Integer Programming and
+  Combinatorial Optimization Proceedings} {\em (Lecture Notes in Computer
+  Science)}, {F.~Eisenbrand} {and} {J.~Koenemann} (Eds.), Vol. 10328. Springer,
+  186--198.
+\newblock
+\newblock
+\shownote{arXiv preprint arXiv:1611.09304.}
+
+
+\bibitem{Freund2016Rebalancing}
+{Daniel Freund}, {Ashkan Norouzi-Fard}, {Alice Paul}, {Shane~G. Henderson},
+  {and} {David~B. Shmoys}. 2016.
+\newblock Data-Driven Rebalancing Methods for Bike-Share Systems.  (2016).
+\newblock
+\newblock
+\shownote{{Working paper}.}
+
+
+\bibitem{fricker2012incentives}
+{Christine Fricker} {and} {Nicolas Gast}. 2012.
+\newblock \showarticletitle{Incentives and regulations in bike-sharing systems
+  with stations of finite capacity}.
+\newblock {\em arXiv preprint arXiv:1201.1178\/} (2012), 2.
+\newblock
+
+
+\bibitem{fricker2016incentives}
+{Christine Fricker} {and} {Nicolas Gast}. 2016.
+\newblock \showarticletitle{Incentives and redistribution in homogeneous
+  bike-sharing systems with stations of finite capacity}.
+\newblock {\em Euro journal on transportation and logistics\/} {5}, 3 (2016),
+  261--291.
+\newblock
+
+
+\bibitem{george2012stochastic}
+{David~K George}. 2012.
+\newblock {\em Stochastic Modeling and Decentralized Control Policies for
+  Large-Scale Vehicle Sharing Systems via Closed Queueing Networks}.
+\newblock Ph.D. Dissertation. The Ohio State University.
+\newblock
+
+
+\bibitem{ho2014solving}
+{Sin~C Ho} {and} {WY Szeto}. 2014.
+\newblock \showarticletitle{Solving a static repositioning problem in
+  bike-sharing systems using iterated tabu search}.
+\newblock {\em Transportation Research Part E: Logistics and Transportation
+  Review\/}  {69} (2014), 180--198.
+\newblock
+
+
+\bibitem{jianetal}
+{Nanjing Jian}, {Daniel Freund}, {Holly~M Wiberg}, {and} {Shane~G Henderson}.
+  2016.
+\newblock \showarticletitle{Simulation optimization for a large-scale
+  bike-sharing system}. In {\em Proceedings of the 2016 Winter Simulation
+  Conference}. IEEE Press, 602--613.
+\newblock
+
+
+\bibitem{merugu2009incentive}
+{Deepak Merugu}, {Balaji~S Prabhakar}, {and} {N Rama}. 2009.
+\newblock \showarticletitle{An incentive mechanism for decongesting the roads:
+  A pilot program in bangalore}. In {\em Proc. of ACM NetEcon Workshop}.
+\newblock
+
+
+\bibitem{citibikeInternal}
+{NYCBS}. 2016.
+\newblock Private Communication.   (2016).
+\newblock
+
+
+\bibitem{bikeangels}
+{{NYCBS}}. 2017a.
+\newblock Bike Angel Program.
+\newblock   (2017).
+\newblock
+\showURL{%
+\url{https://bikeangels.citibikenyc.com}}
+
+
+\bibitem{citibikejson}
+{{NYCBS}}. 2017b.
+\newblock Citi Bike JSON Feed.
+\newblock   (2017).
+\newblock
+\showURL{%
+\url{https://gbfs.citibikenyc.com/gbfs/en/station_status.json}}
+
+
+\bibitem{citibikedata}
+{{NYCBS}}. 2017c.
+\newblock Citi Bike System Data.
+\newblock   (2017).
+\newblock
+\showURL{%
+\url{https://www.citibikenyc.com/system-data}}
+
+
+\bibitem{henomashm16}
+{Eoin O'Mahony}, {Shane~G. Henderson}, {and} {David~B. Shmoys}. 2016.
+\newblock ({C}iti){B}ike sharing.  (2016).
+\newblock
+\newblock
+\shownote{working paper.}
+
+
+\bibitem{o2015data}
+{Eoin O'Mahony} {and} {David~B Shmoys}. 2015.
+\newblock \showarticletitle{Data Analysis and Optimization for (Citi) Bike
+  Sharing}. In {\em Twenty-Ninth AAAI Conference on Artificial Intelligence}.
+  687--694.
+\newblock
+
+
+\bibitem{parikh2014estimation}
+{Pulkit Parikh} {and} {Satish Ukkusuri}. 2014.
+\newblock \showarticletitle{Estimation of Optimal Inventory Levels at Stations
+  of a Bicycle Sharing System}.
+\newblock {\em TRB 94th Annual Meeting\/} (2014).
+\newblock
+
+
+\bibitem{raviv2013optimal}
+{Tal Raviv} {and} {Ofer Kolka}. 2013.
+\newblock \showarticletitle{Optimal inventory management of a bike-sharing
+  station}.
+\newblock {\em IIE Transactions\/} {45}, 10 (2013), 1077--1093.
+\newblock
+
+
+\bibitem{raviv2013static}
+{Tal Raviv}, {Michal Tzur}, {and} {Iris~A Forma}. 2013.
+\newblock \showarticletitle{Static repositioning in a bike-sharing system:
+  models and solution approaches}.
+\newblock {\em EURO Journal on Transportation and Logistics\/} {2}, 3 (2013),
+  187--229.
+\newblock
+
+
+\bibitem{schuijbroek2013inventory}
+{J. Schuijbroek}, {R.C. Hampshire}, {and} {W.-J. van Hoeve}. 2017.
+\newblock \showarticletitle{Inventory rebalancing and vehicle routing in bike
+  sharing systems}.
+\newblock {\em European Journal of Operational Research\/} {257}, 3 (2017), 992
+  -- 1004.
+\newblock
+\showISSN{0377-2217}
+\showDOI{%
+\url{http://dx.doi.org/https://doi.org/10.1016/j.ejor.2016.08.029}}
+
+
+\bibitem{singla2015incentivizing}
+{Adish Singla}, {Marco Santoni}, {G{\'a}bor Bart{\'o}k}, {Pratik Mukerji},
+  {Moritz Meenen}, {and} {Andreas Krause}. 2015.
+\newblock \showarticletitle{Incentivizing Users for Balancing Bike Sharing
+  Systems.}. In {\em AAAI}. 723--729.
+\newblock
+
+
+\bibitem{szeto2016chemical}
+{WY Szeto}, {Ying Liu}, {and} {Sin~C Ho}. 2016.
+\newblock \showarticletitle{Chemical reaction optimization for solving a static
+  bike repositioning problem}.
+\newblock {\em Transportation research part D: transport and environment\/}
+  {47} (2016), 104--135.
+\newblock
+
+
+\bibitem{Waserhole2014}
+{Ariel Waserhole} {and} {Vincent Jost}. 2014.
+\newblock \showarticletitle{Pricing in vehicle sharing systems: optimization in
+  queuing networks with product forms}.
+\newblock {\em EURO Journal on Transportation and Logistics\/} (2014), 1--28.
+\newblock
+
+
+\end{thebibliography}

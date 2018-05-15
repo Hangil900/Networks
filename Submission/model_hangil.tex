@@ -1,0 +1,40 @@
+In this section, we describe the data-set used in our analysis and define the exact model we examine as well as the performance metric used to evaluate policies. 
+
+\subsection{Data-Set}
+
+The data set we used comprises of an email network from a large European research institution (found on the Snap database: 'email-Eu-core network'). The network consists of 1005 nodes and 25571 edges. Each node in the network represents an email user, and an undirected edge exists between two users if they have exchanged emails. 
+
+\subsection{ Model Definitions }
+
+First, let us define $G$ to be the network described in the data-set, and $V$ and $E$ to be the set of nodes and edges in the graph respectively. Further, let us define that the product we aim to introduce has a parameter $\theta$ which represents how appealing the product is. Each node $v_i \in V$ in the network also has a threshold level $t_i$, such that if $\theta$ is greater than $t_i$, the node $v_i$ likes the product and belongs in the set of positive nodes, $V^+$. If $\theta$ is less than the threshold level, the node dislikes the product and belongs in the set of negative nodes $V^-$. Formally, $V^+$ and $V^-$ is defined as follows:
+
+\begin{equation}
+    V^+= \{ v_i | \theta \ge t_i\}
+\end{equation} 
+
+\begin{equation}
+    V^-= \{ v_i | \theta < t_i\}
+\end{equation} 
+
+Further, in our analysis we consider nodes in $V^+$ to be propagating nodes  and nodes in $V^-$ to be blocking nodes. More specifically, propogating nodes, when introduced to the product, like the product and continue to propagate the node to any of it's neighbors who have yet to be introduced to the product and blocking nodes dislike the product and do not propagate the product to any of it's neighbors. In this sense, we can partition $G$ into clusters consisting of nodes belonging to $V^+$ and $V^-$. More formally, for any node $v_i$ in $V^+$, the cluster of nodes it belongs to is the set of nodes which are reachable from $v_i$. The process of identifying and defining these clusters is more formally defined in [2]. 
+
+Then let us define $G_\theta$ to be the subgraph of $G$ consisting of only the nodes in the largest cluster and the edges between these nodes. Then let us define $V_\theta$, $E_\theta$, $V_\theta^+$, $V_\theta^-$ in the same manner as above, except limited to subgraph $G_\theta$. In our analysis we will actually be focusing on these subgraphs $G_\theta$ which consist of only the largest cluster. The reason for this narrowing of scope is that we found that $G$ to be highly connected, meaning that the smaller clusters are extremely small and provide little insight. 
+
+Finally, to introduce stochasticity into the network, let us define every edge in $E_\theta$ to have a uniform propagation probability $p$, meaning the nodes in $V_\theta^+$ propagate the product to each of it's neighbors who have not yet been introduced with probability $p$. Thus, given an initial seed set of nodes $S$ to which the product is introduced, each node in $S$ starts to propagate the product to each of its neighbors who have not yet been introduced, with probability $p$ if the node belongs to $V^+$, and stops propagation otherwise. 
+
+\subsection{ Performance Metric }
+
+The goal of the policy is to introduce the product to nodes in the positive target set $V_\theta^+$ and not introduce the product to nodes in the negative target set $V_\theta^-$. Thus, for a particular simulation in which we choose the seed set to be $S$, let us define $T_S$ to be set of nodes which are introduced to the product. Then let us define the score of the $i^th$ simulation $\delta_i$ to be sum of the number of  positive target nodes in $T_S$ and the number of the negative target nodes not in $T_S$. Formally, $\delta_i(S)$ is defined as follows:
+
+\begin{equation}
+	\delta_i(S) = \sum_{v_i \in V_\theta^+} 1_{\{v_i \in T_S\}} + \sum_{v_i \in V_\theta^-} 1_{\{v_i \not \in T_S\}}
+\end{equation}
+
+where the notation $1_{\{v_i \in V_\theta^+\}}$ means the indicator function that is equal to 1 if $v_i \in V_\theta^+$, and is 0, otherwise.
+
+To calculate the overall expected performance of a policy, we take the average performance over $N$ simulations. Thus let us define $\Delta(S)$ to be the average score of $\delta(S)$ over $N$ simulations and calculated as follows:
+
+\begin{equation}
+	\Delta(S) = \frac{1}{N} \cdot \sum_{i = 1}^{N} \delta(S)
+\end{equation}
+

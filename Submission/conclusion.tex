@@ -1,0 +1,23 @@
+We have proposed a number of data-driven policies to guide incentives for rebalancing in bike-sharing systems via crowdsourcing. While our analysis clearly displays the performance differences between these policies, the superior performance of the more dynamic policies comes with the cost of greater complexity for users and operators alike. % greater  difficulties for users and operators alike than the simpler ones.
+%We have developed several policies for an incentive program like Bike Angels. 
+
+%Beyond the policies described in the paper, we also tried two other offline policies: one based on a fluid model, similar to \cite{jianetal}, another based on a clustering approach that is more explicitly related to the user dissatisfaction functions. The fluid model performed very poorly (70-80\% of the optimal performance in the deterministic regimes), the clustering approach performed very consistently with around 85\% of the optimal policy. Noticeably, the latter did not degrade very much with increased cost parameters. We decided not to include them in the paper as they seemed dominated by the other offline policies in both simplicity and on efficiency.
+
+There are other important considerations beyond their simplicity and performance. For example, when comparing the performance of the Static and Cluster Hindsight policies, it seems unclear at first glance what additional value the Cluster Hindsight policy provides, given that it relies on heavier machinery -- after all, they perform very similarly. However, the Static Hindsight policy can only be defined for stations for which the Static policy had been in place, whereas the Cluster Hindsight policy can be defined for other stations as well. Thus, in a way, each of the policies presented has its own advantage.
+
+Most importantly, our analysis shows that slightly limiting the online fashion of decision-making only causes limited decreases in performance. On the academic side, this adds a data-driven analysis to a recent stream of literature in operations management that compares dynamic and static decision-making in similar applications. On the practical side, our analysis led to Citi 	Bike adopting a version of the Dynamic CC (30) policy in 2017. 
+
+%Bike Angels has developed into a popular progra
+
+%Items to cover:
+
+%Cluster Hindsight is useful for adding new stations (as opposed to Static Hindsight)
+
+%Fluid policy we tried, but it's bad.
+
+%Bike Angels now runs, effectively, on Dynamic CC (30)
+
+%Contribution: data-based approach to the fundamental question about online/offline decision-making with a particular application in sustainable transportation
+
+
+%Finally, the results indicate that Cluster Hindsight and the much simpler Static Hindsight policy perform similarly. Considering the value of simplicity in policies, one might question why the more complicated policy is needed at all. However, the Cluster Hindsight policy is important because it provides the additional benefits of being able to automatically identify stations in need of incentivization as well as provide reasonable incentive intervals for such stations. This is because the clustering of stations performed in the policy does not rely on any past incentive data, allowing any new stations to be included into the clustering and be considered for incentivization. This can prove vital for bike-sharing systems as system usage grows, as the policy provides a mechanism to automatically decide which stations to incentivize and when. 
