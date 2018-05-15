@@ -19,6 +19,7 @@ class Graph():
         self.edgeProb = {} # (i,j) edge indexes the edge probability.
         self.all_paths = None
         self.btwness = None
+        self.katz_vars = None # Used for Katz
 
         # Rename the nodes so ids go from 0 to size.
         count = 0
@@ -229,6 +230,12 @@ class Graph():
         self.all_paths = paths
 
     def calculate_btwness(self, theta):
+        try:
+            if self.btwness:
+                return
+        except Exception as e:
+            self.btwness = None
+        
         inner, outer = self.get_inner_outer_nodes(theta)
         
         nodes = [ i for i in inner]
@@ -245,6 +252,74 @@ class Graph():
         G.add_edges_from(edges)
 
         self.btwness = nx.betweenness_centrality(G)
+
+
+    def _get_A_k(self, A_1, A_prev_k):
+        num_inner = len(A_1)
+        num_total = len(A_1[0])
+        A_k = [[[] for _ in range(num_total)] for _ in range(num_inner)]
+
+        for i in range(num_inner):
+            for j in range(num_total):
+
+                if i == j:
+                    A_k[i][j] = []
+                    continue
+
+                if A_prev_k[i][j] != [] and j < num_inner:
+                    for l in range(num_total):
+                        if A_1[j][l] == 1 and i != l and l not in A_prev_k[i][j]:
+                            A_k[i][l] = A_prev_k[i][j] + [l]# path from i to j
+                    
+        return A_k
+
+    def calculate_katz(self, theta):
+        try:
+            if self.katz_vars:
+                return
+        except Exception as e:
+            self.katz_vars = None
+
+        G = self
+        
+        inner, outer = self.get_inner_outer_nodes(theta)
+        num_inner = len(inner)
+        num_total = len(inner) + len(outer)
+        iterations = 5
+        A_mats = [None for _ in range(iterations)]    # Store A_k's
+        inner_node_idx_to_id = {node_id: idx for idx, node_id in enumerate(inner)}
+        for idx, node_id in enumerate(outer):
+            inner_node_idx_to_id[node_id] = idx + len(inner)
+            
+        # Construct adjacent matrix
+        adj_mat = np.zeros((num_inner, num_total))
+        for node_idx, inner_node in enumerate(inner):
+            for neighbor in G.edges[inner_node]:
+                adj_mat[node_idx][inner_node_idx_to_id[neighbor]] = 1
+            
+        A_mats[0] = [[[j] if adj_mat[i, j] > 0 else [] for j in range(num_total) ]
+                     for i in range(num_inner)]
+
+        for i in range(1, iterations):
+            A_mats[i] = self._get_A_k(A_mats[0], A_mats[i - 1])
+        
+        A_binary = []
+        for A_i in A_mats:
+            cur_A = np.zeros((num_inner, num_total))
+            for i in range(num_inner):
+                for j in range(num_total):
+                    if A_i[i][j] == None:
+                        pass
+                    else:
+                        if len(A_i[i][j]) > 0:
+                            if j < num_inner:
+                                cur_A[i, j] = 1
+                            else:
+                                cur_A[i,j] = -1
+            A_binary.append(cur_A)
+
+
+        self.katz_vars = (A_binary, inner, outer, iterations)
 
 
 

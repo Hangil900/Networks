@@ -198,41 +198,7 @@ def _get_A_k(A_1, A_prev_k):
             
 
 def get_katz_seed(G, inner, outer, budgeted, p):
-    num_inner = len(inner)
-    num_total = len(inner) + len(outer)
-    iterations = 5
-    A_mats = [None for _ in range(iterations)]    # Store A_k's
-    inner_node_idx_to_id = {node_id: idx for idx, node_id in enumerate(inner)}
-    for idx, node_id in enumerate(outer):
-        inner_node_idx_to_id[node_id] = idx + len(inner)
-    
-    # Construct adjacent matrix
-    adj_mat = np.zeros((num_inner, num_total))
-    for node_idx, inner_node in enumerate(inner):
-        for neighbor in G.edges[inner_node]:
-            adj_mat[node_idx][inner_node_idx_to_id[neighbor]] = 1
-            
-    A_mats[0] = [[[j] if adj_mat[i, j] > 0 else [] for j in range(num_total) ]
-                 for i in range(num_inner)]
-
-    for i in range(1, iterations):
-        A_mats[i] = _get_A_k(A_mats[0], A_mats[i - 1])
-        
-    A_binary = []
-    for A_i in A_mats:
-        cur_A = np.zeros((num_inner, num_total))
-        for i in range(num_inner):
-            for j in range(num_total):
-                if A_i[i][j] == None:
-                    pass
-                else:
-                    if len(A_i[i][j]) > 0:
-                        if j < num_inner:
-                            cur_A[i, j] = 1
-                        else:
-                            cur_A[i,j] = -1
-        A_binary.append(cur_A)
-
+    A_binary, inner, outer, iterations = G.katz_vars
     centrality = np.zeros(len(inner))
     for idx, node in enumerate(inner):
         for k in range(iterations):
@@ -311,7 +277,11 @@ def run():
 
         start = time.time()
         SG.calculate_btwness(theta)
+        SG.calculate_katz(theta)
         end = time.time()
+
+        pickle.dump(SG, open(graph_file, 'wb'))
+        print "Katz time: {0}".format( round( (end - start) / 60.0, 3))
 
         inner, outer = SG.get_inner_outer_nodes(theta)
 
@@ -338,19 +308,28 @@ def run():
             scores_budgeted = [0.0] * len(algs)
 
             start = time.time()
+
+            seeds = []
+            seeds_budgeted = []
+
+            budgeted= True
+            for ind, alg in enumerate(algs):
+                seed = alg(SG, inner, outer, budgeted, p)
+                seeds.append(seed)
+
+            budgeted = False
+            for ind, alg in enumerate(algs):
+                seed = alg(SG, inner, outer, budgeted, p)
+                seeds_budgeted.append(seed)
         
             for i in range(NUM):
                 G_theta = SG.get_subgraph(theta)
-                budgeted = True
                 for ind, alg in enumerate(algs):
-                    seed = alg(SG, inner, outer, budgeted, p)
+                    seed = seeds[ind]
+                    seed_b = seeds_budgeted[ind]
                     scores[ind] += G_theta.get_seed_score(seed)
+                    scores_budgeted[ind] += G_theta.get_seed_score(seed_b)
 
-                budgeted = False
-                for ind, alg in enumerate(algs):
-                    seed = alg(SG, inner, outer, budgeted, p)
-                    scores_budgeted[ind] += G_theta.get_seed_score(seed)
-                    
             end = time.time()
             print "Calculating Seed: {0}".format((end - start)/60)
 
