@@ -55,16 +55,20 @@ class Subgraph():
         self.outer = outer
 
     # Given a seed returns the score that seed would have gotten.
-    def get_seed_score(self, seed):
+    def get_seed_score(self, seeds):
 
         score = 0.0
 
         visited = set()
-        queue = [seed]
-        visited.add(seed)
+        queue = seeds
+        for s in seeds:
+            if s in visited:
+                pdb.set_trace()
+            visited.add(s)
 
         while len(queue) > 0:
             i = queue.pop()
+
             if i in self.inner:
                 score += 1
             else:

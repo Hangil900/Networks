@@ -51,8 +51,8 @@ def update_results():
     pickle.dump(new_results, open('./new_results.p', 'wb'))
         
 
-def get_results():
-    results = pickle.load(open(config.new_results_p, 'rb'))
+def get_results(algs):
+    results = pickle.load(open(config.results_p, 'rb'))
     res_dict = {}
     thetas = set()
     ps = set()
@@ -70,29 +70,29 @@ def get_results():
 
     for theta in thetas:
         res_dict[theta] = {}
-        res_dict[theta]['High-Deg'] = [None] * len(ps)
-        res_dict[theta]['Random'] = [None] * len(ps)
-        res_dict[theta]['Farthest'] = [None] * len(ps)
-        res_dict[theta]['Near-Far'] = [None] * len(ps)
-
+        for alg in algs:
+            res_dict[theta][alg] = [None] * len(ps)
+            
     for row in results:
         theta = (row[0], row[1])
         p = row[2]
         p_ind = p_indx[p]
+        best_possible = float(row[-1])
+        off_set = 3
 
-        res_dict[theta]['High-Deg'][p_ind] = row[3]
-        res_dict[theta]['Random'][p_ind] = row[4]
-        res_dict[theta]['Farthest'][p_ind] = row[5]
-        res_dict[theta]['Near-Far'][p_ind] = row[6]
-        
+        for i, alg in enumerate(algs):
+            res_dict[theta][alg][p_ind] = row[i + off_set] / best_possible
+
     return res_dict, ps
 
 
+
 def plot_results():
-    results, x_axis = get_results()
-    markers = [ 'v', 's', '>' , '*']
-    colors = ['b', 'g', 'y', 'r']
-    algs = ['Random', 'High-Deg', 'Farthest', 'Near-Far']
+    algs = [ 'High-Deg', 'Random', 'Farthest', 'Near-Far', 'Btwness']
+    results, x_axis = get_results(algs)
+    markers = [ 'v', 's', '>' , '*', '^']
+    colors = ['b', 'g', 'y', 'r', 'orange']
+
 
     for theta in results:
 

@@ -2,6 +2,7 @@ import copy, pickle, os, config, pdb
 import numpy as np
 from subgraph import Subgraph
 import random
+import networkx as nx
 
 class Graph():
 
@@ -17,6 +18,7 @@ class Graph():
         self.name = name
         self.edgeProb = {} # (i,j) edge indexes the edge probability.
         self.all_paths = None
+        self.btwness = None
 
         # Rename the nodes so ids go from 0 to size.
         count = 0
@@ -226,31 +228,50 @@ class Graph():
 
         self.all_paths = paths
 
+    def calculate_btwness(self, theta):
+        inner, outer = self.get_inner_outer_nodes(theta)
+        
+        nodes = [ i for i in inner]
+        edges = []
+
+        for i in inner:
+            for j in self.edges[i]:
+                if j in inner:
+                    edges.append((i,j))
+
+        G = nx.Graph()
+
+        G.add_nodes_from(nodes)
+        G.add_edges_from(edges)
+
+        self.btwness = nx.betweenness_centrality(G)
+
 
 
 if __name__ == '__main__':
-    edges = [(0,2, 1),
-             (1,2,1),
-             (1,3,1),
-             (2,3,1),
-             (2,4,1),
-             (3,4,1),
-             (4,5,1),]
+    edges = [(0,2),
+             (1,2),
+             (1,3),
+             (2,3),
+             (2,4),
+             (3,4),
+             (4,5),]
 
-    nodes = [(0,1),
-             (1,1),
-             (2,1),
-             (3,1),
-             (4,1),
-             (5,1)]
+    nodes = [0,1,2,3,4,5]
+    
 
-    size = 6
+    G = nx.Graph()
 
-    G = Graph(size, nodes, edges)
 
-    G.calculate_all_paths()
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
 
-    print G.all_paths
+    btw = nx.betweenness_centrality(G)
+
+    print btw
+    pdb.set_trace()
+
+    
         
 
     
