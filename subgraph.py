@@ -60,7 +60,7 @@ class Subgraph():
         score = 0.0
 
         visited = set()
-        queue = seeds
+        queue = list(seeds)
         for s in seeds:
             if s in visited:
                 pdb.set_trace()

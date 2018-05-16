@@ -4,12 +4,15 @@ import random, csv, pickle
 import numpy as np
 import os
 import time, heapq
+import plot
 
 # Parses enron data file.
 def get_enron_data():
 
     edges = []
     nodes = []
+    edge_set = set()
+    node_set = set()
     
     with open(config.enron_email_data, 'rb') as f:
         lines = f.readlines()
@@ -22,11 +25,30 @@ def get_enron_data():
             theta1 = get_node_theta(i)
             theta2 = get_node_theta(j)
             p = get_edge_prob(i, j)
-            
-            edges.append((i, j, p))
-            nodes.append((i, theta1))
-            nodes.append((j , theta2))
 
+            edge = (i,j)
+            edge2 = (j,i)
+
+            if edge not in edge_set:
+                edge_set.add(edge)
+                edges.append((i, j, p) )
+
+            if edge2 not in edge_set:
+                edge_set.add(edge2)
+                edges.append( (j,i, p) )
+
+            if i not in node_set:
+                node_set.add(i)
+                nodes.append((i, theta1))
+
+            if j not in node_set:
+                node_set.add(j)
+                nodes.append((j , theta2))
+
+    assert len(nodes) == len(node_set)
+    assert len(edges) == len(edge_set)
+    print len(nodes), len(edges)
+    
     return len(nodes), nodes, edges
 
 # Function to decide theta value of nodes. Can override for different configurations.
@@ -58,18 +80,19 @@ def get_highest_deg_seed(G, inner, outer, budgeted, p):
         return [n]
 
     else:
-        seeds = []
+        num_seeds = int((1-p) * len(inner))
+        heap = []
         for n in inner:
-            count = 0
+            score = 0
             for j in G.edges[n]:
                 if j in inner:
-                    count += 1
+                    score += 1
                 else:
-                    count -=1
+                    score -=1
+            heapq.heappush(heap, (score, n))
 
-            if count > 0:
-                seeds.append(n)
-
+        seed_pairs = heapq.nsmallest(num_seeds, heap)
+        seeds = [x[1] for x in seed_pairs]
         return seeds
 
 # Returns random seed
@@ -115,7 +138,7 @@ def get_furthest_seed(G, inner, outer, budgeted, p):
 
             heapq.heappush(heap, (score, n))
 
-        seed_pairs = heapq.nsmallest(3, heap)
+        seed_pairs = heapq.nsmallest(num_seeds, heap)
         seeds = [x[1] for x in seed_pairs]
         return seeds
         
@@ -210,13 +233,17 @@ def get_katz_seed(G, inner, outer, budgeted, p):
 
     nodes_by_centrality = np.argsort(-centrality)
 
+    seeds = []
     if budgeted:
-        num_seeds = 1
+        seeds.append(inner[nodes_by_centrality[0]])
     else: 
-        num_seeds = int((1-p) * len(inner))
-
-    return [inner[nodes_by_centrality[i]] for i in range(num_seeds)]
-
+        for ind in nodes_by_centrality:
+            if centrality[ind] > 0:
+                seeds.append(inner[ind])
+            else:
+                break
+    return seeds
+            
 def get_katz_seed_nx(G, inner, outer, budgeted, p):
     # Set up NX graph
     nx_graph = nx.Graph()
@@ -253,8 +280,8 @@ def run():
     random.seed(0)
     header = ['Theta', 'Inner', 'Outer', 'Ratio', 'Prob', 'Opt',
               'HD', 'Rand', 'Far', 'Near', "Btw", 'katz']
-    results = []
-    results_budgeted = []
+    all_results = []
+    all_results_budgeted = []
 
     # Number of iterations to run.
     NUM = 100
@@ -263,29 +290,50 @@ def run():
     size, nodes, edges = get_enron_data()
     G = graph.Graph(size, nodes, edges)
 
-    for theta in np.linspace(0.1, 0.9, 17):
+    theta_list =  [0.1, 0.2, 0.4, 0.6, 0.5, 0.3, 0.7, 0.8, 0.9]
+    #theta_list = [0.6, 0.5]
+    #theta_list = [0.3, 0.7]
+    #theta_list = [0.8, 0.9]
+    for theta in theta_list:
+        theta_results_file = config.theta_results_p.format(theta)
+        theta_results_file_budgeted = config.theta_results_budgeted_p.format(theta)
+
+        if (os.path.isfile(theta_results_file) and
+            os.path.isfile(theta_results_file_budgeted)):
+
+            results = pickle.load(open(theta_results_file, 'rb'))
+            results_budgeted = pickle.load(open(theta_results_file_budgeted, 'rb'))
+
+            all_results.extend(results)
+            all_results_budgeted.extend(results_budgeted)
+
+            # Plot results
+            plot.plot_results(results, True)
+            plot.plot_results(results_budgeted, False)
+
+            continue
+
+        
+        results = []
+        results_budgeted = []
         graph_file = config.graph_file.format(theta)
         start = time.time()
         if os.path.isfile(graph_file):
             SG = pickle.load(open(graph_file, 'rb'))
         else:
+            start = time.time()
             SG =  G.get_largest_cluster_subgraph(theta)
             SG.get_distance_matrix()
+            SG.calculate_btwness(theta)
+            SG.calculate_katz(theta)
             pickle.dump(SG, open(graph_file, 'wb'))
+            end = time.time()
+            print "\n\nPrep time: {0}".format( round( (end - start) / 60.0, 3))
 
-        end = time.time()
-
-        start = time.time()
-        SG.calculate_btwness(theta)
-        SG.calculate_katz(theta)
-        end = time.time()
-
-        pickle.dump(SG, open(graph_file, 'wb'))
-        print "Katz time: {0}".format( round( (end - start) / 60.0, 3))
 
         inner, outer = SG.get_inner_outer_nodes(theta)
 
-        print "\n\nTheta: {0}, inner:{1}, outer:{2}".format(theta,
+        print "Theta: {0}, inner:{1}, outer:{2}".format(theta,
                                                         len(inner),
                                                         len(outer))
 
@@ -321,7 +369,7 @@ def run():
             for ind, alg in enumerate(algs):
                 seed = alg(SG, inner, outer, budgeted, p)
                 seeds_budgeted.append(seed)
-        
+
             for i in range(NUM):
                 G_theta = SG.get_subgraph(theta)
                 for ind, alg in enumerate(algs):
@@ -343,17 +391,34 @@ def run():
 
             row_b = setting + norm_scores_budgeted
             results_budgeted.append(row_b)
-            
-    pickle.dump(results, open(config.results_p, 'wb'))
-    pickle.dump(results_budgeted, open(config.results_budgeted_p, 'wb'))
+
+        # Add Theta results
+        all_results.extend(results)
+        all_results_budgeted.extend(results_budgeted)
+
+        # Pickle Theta results
+        pickle.dump(results, open(theta_results_file, 'wb'))
+        pickle.dump(results_budgeted,
+                    open(theta_results_file_budgeted, 'wb'))
+
+        # Plot results
+        plot.plot_results(results, True)
+        plot.plot_results(results_budgeted, False)
+
+
+    print theta_list
+    pdb.set_trace()
+    
+    pickle.dump(all_results, open(config.results_p, 'wb'))
+    pickle.dump(all_results_budgeted, open(config.results_budgeted_p, 'wb'))
 
     with open(config.results_file, 'wb') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
-        for row in results:
+        for row in all_results:
             writer.writerow(row)
 
     with open(config.results_file_budgeted, 'wb') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
-        for row in results_budgeted:
+        for row in all_results_budgeted:
             writer.writerow(row)
 

@@ -33,8 +33,8 @@ class Graph():
             self.edges[idToNum[i]].append(idToNum[j])
             self.edgeProb[(idToNum[i], idToNum[j])] = p
 
-            self.edges[idToNum[j]].append(idToNum[i])
-            self.edgeProb[(idToNum[j], idToNum[i])] = p
+            #self.edges[idToNum[j]].append(idToNum[i])
+            #self.edgeProb[(idToNum[j], idToNum[i])] = p
 
 
     # Returns clusters in the graph based on the theta value input.
@@ -91,9 +91,13 @@ class Graph():
         edges = []
 
         for i in largest:
-            for j in self.edges[i]:
-                if j in largest:
-                    edges.append( (i, j, self.edgeProb[(i,j)]))
+            if self.nodeThetas[i] <= theta:
+                for j in self.edges[i]:
+                    if j in largest:
+                        edges.append( (i, j, self.edgeProb[(i,j)]))
+            else:
+                # Outer node skip edges
+                continue
 
             
         name = self.name + "_{0}".format(theta)
@@ -192,9 +196,10 @@ class Graph():
             for j in self.edges[i]:
                 if i < j:
                     rand = random.random()
-                    if rand >= self.edgeProb[(i,j)]:
+                    if rand <= self.edgeProb[(i,j)]:
                         edges[i].append(j)
-                        edges[j].append(i)
+                        if j not in outer:
+                            edges[j].append(i)
 
         return Subgraph(edges, inner, outer)
 

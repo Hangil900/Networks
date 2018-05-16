@@ -1,30 +1,33 @@
-In this section, we describe the data-set used in our analysis and define the exact model we examine as well as the performance metric used to evaluate policies. 
+In this section, we describe the data-set used in our analysis, define the exact model we examine, and state the performance metric used to evaluate the various seeding-policies. 
 
 \subsection{Data-Set}
 
-The data set we used comprises of an email network from a large European research institution (found on the Snap database: 'email-Eu-core network'). The network consists of 1005 nodes and 25571 edges. Each node in the network represents an email user, and an undirected edge exists between two users if they have exchanged emails. 
+We used an email network of a large European research institution (found on the Snap database: 'email-Eu-core network') as the main social network to examine and test on. The network consists of 1005 nodes and 25571 edges. Each node in the network represents an email user, and an directed  edge,$e_{i,j}$,  exists if user $i$ has sent an email to user $j$. The network was purposely chosen due to tis relatively small size such that the more calculation-intensive and complex seeding-policies could be run feasibly on the network.
 
-\subsection{ Model Definitions }
+\subsection{Model Definitions}
 
-First, let us define $G$ to be the network described in the data-set, and $V$ and $E$ to be the set of nodes and edges in the graph respectively. Further, let us define that the product we aim to introduce has a parameter $\theta$ which represents how appealing the product is. Each node $v_i \in V$ in the network also has a threshold level $t_i$, such that if $\theta$ is greater than $t_i$, the node $v_i$ likes the product and belongs in the set of positive nodes, $V^+$. If $\theta$ is less than the threshold level, the node dislikes the product and belongs in the set of negative nodes $V^-$. Formally, $V^+$ and $V^-$ is defined as follows:
+In our model, we consider the problem of introducing a product to a social network. The goal is to introduce the product to as many people who will like the product, and avoid introducing the product to people who will dislike it. Further, we assume people who like the product will introduce the product to their friends (neighbors), while people who dislike the product will not.
+
+Formally, let us first define $G$ to be the network described in the data-set, and $V$ and $E$ to be the set of nodes and edges in the graph respectively. Further, each node $v_i \in V$ has an "appeal threshold" parameter, $t_i$, associated with it. This parameter represents how appealing an product has to be for the node to like the product. The product's actual appeal parameter is defined as $\theta$. Then for any node if $t_i \le \theta$, the node will like the product and otherwise dislike the product. Let us define $V^+$ and $V^-$ to be the set of positive and negative target nodes that like and dislike the product respectively. $V^+$ and $V^-$ is defined as follows:
 
 \begin{equation}
     V^+= \{ v_i | \theta \ge t_i\}
 \end{equation} 
-
 \begin{equation}
     V^-= \{ v_i | \theta < t_i\}
 \end{equation} 
 
-Further, in our analysis we consider nodes in $V^+$ to be propagating nodes  and nodes in $V^-$ to be blocking nodes. More specifically, propogating nodes, when introduced to the product, like the product and continue to propagate the node to any of it's neighbors who have yet to be introduced to the product and blocking nodes dislike the product and do not propagate the product to any of it's neighbors. In this sense, we can partition $G$ into clusters consisting of nodes belonging to $V^+$ and $V^-$. More formally, for any node $v_i$ in $V^+$, the cluster of nodes it belongs to is the set of nodes which are reachable from $v_i$. The process of identifying and defining these clusters is more formally defined in [2]. 
+In our analysis we consider nodes in $V^+$ to be propagating nodes and nodes in $V^-$ to be blocking nodes. Propagating nodes, when introduced to the product, like the product and continue to propagate the node to any of it's neighbors who have yet to be introduced to the product. Blocking nodes, in contrast, dislike the product and do not propagate the product to any of it's neighbors. We can model this behavior, by removing any outgoing edges from nodes belonging to $V^-$. 
 
-Then let us define $G_\theta$ to be the subgraph of $G$ consisting of only the nodes in the largest cluster and the edges between these nodes. Then let us define $V_\theta$, $E_\theta$, $V_\theta^+$, $V_\theta^-$ in the same manner as above, except limited to subgraph $G_\theta$. In our analysis we will actually be focusing on these subgraphs $G_\theta$ which consist of only the largest cluster. The reason for this narrowing of scope is that we found that $G$ to be highly connected, meaning that the smaller clusters are extremely small and provide little insight. 
+Then we can partition $V^+$ into distinct clusters, by grouping by nodes that are reachable to each other. More formally, the cluster containing node $v_i \in V^+$ also contains all other nodes that are reachable from $v_i$ when considering the propagation rules explained above. The process of identifying and defining these clusters is more formally defined in [2]. 
 
-Finally, to introduce stochasticity into the network, let us define every edge in $E_\theta$ to have a uniform propagation probability $p$, meaning the nodes in $V_\theta^+$ propagate the product to each of it's neighbors who have not yet been introduced with probability $p$. Thus, given an initial seed set of nodes $S$ to which the product is introduced, each node in $S$ starts to propagate the product to each of its neighbors who have not yet been introduced, with probability $p$ if the node belongs to $V^+$, and stops propagation otherwise. 
+Now let us define $G_\theta$ to be the subgraph of $G$ consisting of only the nodes in the largest cluster and the edges between these nodes. Then let us define $V_\theta$, $E_\theta$, $V_\theta^+$, $V_\theta^-$ in the same manner, except limited to subgraph $G_\theta$. In our analysis we will actually be focusing on these subgraphs $G_\theta$ which consist of only the largest cluster. The reason for this narrowing of scope is that we found $G$ to be highly connected, meaning the smaller clusters are extremely small and provide little insight and value.Finally, to introduce stochasticity into the network, let us define every edge in $E_\theta$ to have a uniform propagation probability $p$, meaning the nodes in $V_\theta^+$ propagate the product to each of it's neighbors who have not yet been introduced with probability $p$.
 
-\subsection{ Performance Metric }
+Given such a model, the problem examined is how to choose the initial set of seed nodes to introduce the product to. In our analysis we will examine the model under two regimes: budgeted and unbudgeted. The budgeted regime places the restriction that only a single seed node can be used and aligns with practical purposes, where companies have limited resources to introduce a new product. The second regime lifts the restriction and assumes an unlimited number of initial seed nodes can be chosen.
 
-The goal of the policy is to introduce the product to nodes in the positive target set $V_\theta^+$ and not introduce the product to nodes in the negative target set $V_\theta^-$. Thus, for a particular simulation in which we choose the seed set to be $S$, let us define $T_S$ to be set of nodes which are introduced to the product. Then let us define the score of the $i^th$ simulation $\delta_i$ to be sum of the number of  positive target nodes in $T_S$ and the number of the negative target nodes not in $T_S$. Formally, $\delta_i(S)$ is defined as follows:
+\subsection{Performance Metric}
+
+The goal of seeding-policies is to introduce the product to nodes in the positive target set, $V_\theta^+$, and not introduce the product to nodes in the negative target set, $V_\theta^-$. For a seed set S, we can run a simulation to see which nodes the product is introduced to. Let us define this set to be $T_S$. Then let us define the score of the $i^{th}$ simulation $\delta_i$ to be sum of the number of  positive target nodes in $T_S$ and the number of negative target nodes not in $T_S$. Formally, $\delta_i(S)$ is defined as follows:
 
 \begin{equation}
 	\delta_i(S) = \sum_{v_i \in V_\theta^+} 1_{\{v_i \in T_S\}} + \sum_{v_i \in V_\theta^-} 1_{\{v_i \not \in T_S\}}
@@ -32,9 +35,14 @@ The goal of the policy is to introduce the product to nodes in the positive targ
 
 where the notation $1_{\{v_i \in V_\theta^+\}}$ means the indicator function that is equal to 1 if $v_i \in V_\theta^+$, and is 0, otherwise.
 
-To calculate the overall expected performance of a policy, we take the average performance over $N$ simulations. Thus let us define $\Delta(S)$ to be the average score of $\delta(S)$ over $N$ simulations and calculated as follows:
+To calculate the overall expected performance of a policy, we take the average performance over $N$ simulations. Thus let us define $\Delta(S)$ to be the average score of $\delta(S)$ over $N$ simulations. In our analysis N is set to be 1000, and $\Delta(S)$ is calculated as follows:
 
 \begin{equation}
-	\Delta(S) = \frac{1}{N} \cdot \sum_{i = 1}^{N} \delta(S)
+	\Delta(S) = \frac{1}{N} \cdot \sum_{i = 1}^{N} \delta_i(S)
 \end{equation}
 
+Finally, to allow for comparison of scores across different $\theta$ values, we will present the results in a relative score. Theoretically, the best possible score achievable is equal to the sum of the cardinalities of the positive and negative target sets, and the relative score is calculated by dividing by this best possible score. Thus the overall relative score, $\phi(S)$ is calculated as follows:
+
+\begin{equation}
+	\phi(S) = \frac{1}{|V^+_\theta| + |V^-_\theta|} \cdot \Delta(S)
+\end{equation}
