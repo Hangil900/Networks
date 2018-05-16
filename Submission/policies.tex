@@ -1,54 +1,62 @@
-In this section, we define a number of seeding policies. In our analysis, we examine the model under two regimes: budgeted and unbudgeted. In the budgeted regime, we assume we can only pick one starting seed. In the unbudgeted regime we assume we can choose as many starting seed nodes as needed. Note that because we consider $G_\theta$, which consists of the single largest cluster, that a single seed can theoretically reach all nodes within the cluster. For each of the policies defined below, we define the policy under both the budgeted and unbudgeted regime. 
+In this section, we define a number of seeding policies. For each of the policies defined below, we define the policy under both the budgeted and unbudgeted regime. 
 
 \subsection{Random} 
 \textit{Budgeted:}
-This policy simply choses at random a seed node from the set of positive target nodes $V_\theta^+$ and serves as the baseline policy with which to compare other heuristics.
+This policy simply choses at random a seed node from the set of positive target nodes, $V_\theta^+$, and serves as the baseline policy with which to compare other heuristics.
 
 \textit{Unbudgeted:}
-The policy chooses at random $(1-p) \cdot |V_\theta^+|$ seed nodes from $V_\theta^+$. The intuition behind choosing $(1-p) \cdot |V_\theta^+|$ seed nodes is that the propagation probability $p$ captures how connected the network will be in hindsight when imagining that we flip a coin for each edge to determine if the edge propagates or not in the simulation. Thus, the more connected the network is the fewer seed nodes we will need. Hence, we take $(1-p)$ fraction of the positive target set cardinality. 
+This policy chooses at random $(1-p) \cdot |V_\theta^+|$ seed nodes from $V_\theta^+$. The intuition behind choosing $(1-p) \cdot |V_\theta^+|$ seed nodes is that the propagation probability $p$ captures how connected the network will be in hindsight of running a simulation. The more connected the network is, the fewer seed nodes we will need. Hence, we take $(1-p)$ fraction of the positive target set cardinality. 
+
+This is the simplest policy, and does not utilize any information of the social network. 
 
 \subsection{Degree Centrality} 
 \textit{Budgeted:}
-This policy chooses from $V_\theta^+$ the node which has the highest degree when considering only other positive target nodes. More specifically, the policy chooses the node within $V_\theta^+$ which has the most number of neighbors also belonging to $V_\theta^+$. Formally, the seed node $v^*$ chosen can be defined as follows: 
+This policy chooses from $V_\theta^+$ the node which has the highest degree when considering positive nodes to be $+1$ degree and negative nodes to be $-1$. Formally, let us define $N(v_j)$ to be the neighbors of node $v_j$, then the seed node $v^*$ is defined as follows: 
 
 \begin{equation}
-	v^* = \text{arg}\,\max\limits_{v_i}\  \sum_{v_j \in N(v_i)} 1_{v_j \in V_\theta^+}
+	v^* = \text{arg}\,\max\limits_{v_i}\  \sum_{v_j \in N(v_i)} 1_{\{v_j \in V_\theta^+\}} - 1_{\{v_j \in V_\theta^-\}}
 \end{equation}
 
-The intuition behind this policy is that this node will have the highest initial propagation rate to other positive target nodes.
+where $1_{\{v_j \in V_\theta^+\}}$ means the indicator function that equals 1 if $v_j \in V_\theta^+$ and 0 otherwise. The intuition behind this policy is that this node will have the highest initial propagation rate to other positive target nodes and while avoiding negative nodes.
 
 \textit{Unbudgeted:}
-In the unbudgeted regime, the same algorithm is used, except we choose the top $(1-p) \cdot |V_\theta^+|$ seed nodes using the equation described above.
+In the unbudgeted regime, the same algorithm is used, except the top $(1-p) \cdot |V_\theta^+|$ nodes with highest degree is used, using equation 5.
 
-\subsection{Farthest from Exterior}
+This policy serves as an example of a rather simple policy, as it only utilizes information about the direct neighbors of nodes and doesn't incorporate any distance measure in its calculations. This allows the policy to be scalable to larger networks.
+
+\subsection{Farthest from Negative}
 \textit{Budgeted:}
-This policy is based on the intuition that we want to avoid the "bad" negative nodes. Thus the policy first calculates the expected minimum-distance between all pairs of points within $G_\theta$, and chooses the seed node to be the node which has the largest average expected distance to negative nodes. We use the term "expected distance" because we incorporate into our calculations the probability of reaching a node via the shortest path. Specifically, if the shortest-path to a negative node is 3 (3 edges away), then the expected distance is defined to be $\frac{1}{p^3}$ to reflect the probabilities of each edge. Formally if we define $d_{i,j}$ to be the distance between $v_i$ and $v_j$, then the seed node $v^*$ is chosen as follows:
+This policy is based on the intuition that we want to avoid the "bad" negative nodes. Thus the policy first calculates the expected shortest-distance between all pairs of points within $G_\theta$, and chooses the seed node to be the node which has the largest average expected distance to negative nodes. We use the term "expected distance" because we incorporate into our calculations the probability of reaching a node via the shortest path. Specifically, if the shortest-path to a negative node is 3 (3 edges away), then the expected distance is defined to be $\frac{1}{p^3}$ to reflect the probability of actually reaching the node. If we define $d_{i,j}$ to be the distance between $v_i$ and $v_j$, then the seed node $v^*$ is chosen as follows:
 \\ \\
 \begin{equation}
 \text{arg}\,\max\limits_{v_i}\  \frac{1}{|V_{\theta}^-|} \sum_{v_j \in V_\theta^-} \frac{1}{p^{d_{i,j}}}
 \end{equation}
 
 \textit{Unbudgeted:}
-In the unbudgeted regime, the same algorithm is used, except we choose the top $(1-p) \cdot |V_\theta^+|$ seed nodes using the equation described in the budgeted regime.
+The same algorithm is used, except we choose the top $(1-p) \cdot |V_\theta^+|$ seed nodes using equation 6.
+
+This policy proves to be a semi-simple policy. The policy is more complex than previous policies in the sense that it includes a distance measure in it's calculations. However, the policy is still relatively simple as it only accounts for the negative nodes and doesn't account for the positive nodes.
 
 \subsection{Near-Far} 
 \textit{Budgeted:}
-This policy combines our desire to be far from negative target nodes and desire to be near positive target nodes. Thus, using the same expected minimum-distance between all points, the policy calculates for each node the sum of the distances to the good nodes minus the sum of the distances to the bad nodes, and chooses the node with the largest value to be the seed node. The seed node $v^*$ is chosen as follows:
+This policy combines our desire to be far from negative target nodes and near positive target nodes. Thus, using the same expected minimum-distance between all points, the policy calculates for each node the sum of the distances to the positive nodes minus the sum of the distances to the negative nodes, and chooses the node with the largest value to be the seed node. The seed node $v^*$ is chosen as follows:
 \\ \\
 \begin{equation}
 \text{arg}\,\max\limits_{v_i}\  \sum_{v_j \in V_\theta^+} \frac{1}{p^{d_{i,j}}} -  \sum_{v-j \in V_{\theta}^-} \frac{1}{p^{d_{i,j}}}
 \end{equation}
 
 \textit{Unbudgeted:}
-In the unbudgeted regime, the same algorithm is used except we include all nodes which are more positive than negative. Intuitively, we can imagine the algorithm as considering all the positive and negative nodes and weighing each by the inverse of its distance. Thus the set of nodes $S$ can be defined as follows:
+In the unbudgeted regime, the same algorithm is used and we include all nodes which are more positive than negative. Intuitively, we can imagine the algorithm as considering all the positive and negative nodes and weighing each by the inverse of its distance and choosing nodes who weigh more positive. The set of nodes $S$ is defined as follows:
 
 \begin{equation}
-S = \{ v_i |  \sum_{v_j \in V_\theta^+} \frac{1}{p^{d_{i,j}}} -  \sum_{v-j \in V_{\theta}^-} \frac{1}{p^{d_{i,j}}} > 0 \}
+S = \{ v_i |  \sum_{v_j \in V_\theta^+} \frac{1}{p^{d_{i,j}}} -  \sum_{v_j \in V_{\theta}^-} \frac{1}{p^{d_{i,j}}} > 0 \}
 \end{equation}
+
+This policy proves to be a complex policy. It accounts for both the positive and negative nodes and also utilizes the distance metric.
 
 \subsection{Betweenness Centrality}
 \textit{Budgeted:}
-This policy considers the betweenness centrality of the positive target nodes. More specifically, it calculates the betweenness measure of each node when considering only the positive target nodes in $V_\theta^+$ and chooses the node with highest betweenness centrality. Thus the seed node $v^*$ is calculated as folllows:
+This policy considers the betweenness centrality of the positive target nodes. More specifically, it calculates the betweenness measure of each node when considering only the positive target nodes in $V_\theta^+$, and chooses the node with highest betweenness measure. The seed node $v^*$ is calculated as follows:
 
 \begin{equation}
 	\text{arg}\,\max\limits_{v_i}\  \sum_{v_j \neq v_k \neq v_i  \in V_\theta^+} \frac{\sigma_{j,k}(i)}{\sigma_{j,k}}
@@ -57,8 +65,45 @@ This policy considers the betweenness centrality of the positive target nodes. M
 where $\sigma_{j,k}$ is the number of shortest-paths between $v_j$ and $v_k$, and $\sigma_{j,k}(i)$ is the number of those shortest-paths which pass through $v_i$.
 
 \textit{Unbudgeted:}
-In the unbudgeted regime, the same algorithm is used except similar to before, we choose the top $(1-p) \cdot |V_\theta^+|$ seed nodes using the equation described in the budgeted regime.
+In the unbudgeted regime, the same algorithm is used except similar to before, we choose the top $(1-p) \cdot |V_\theta^+|$ seed nodes using equation 9.
 
+This policy also proves to be a semi-simple policy as it utilizes the distance metric but still fails to account for the negative nodes. 
 
+\subsection{Katz Centrality}
 
+Katz centrality $c_v$ for node $v$ in a graph can be calculated as following:
+
+\begin{equation}
+c_v = \sum_{k=1}^{K} \sum_{u \neq v} {\alpha}^k (A_k)_{v, u}
+\end{equation}
+
+, where $(A_k)$ is the degree $k$ adjacency matrix. In other words,  $(A_k)_{v, u} = 1$ if nodes $u$ and $v$ are degree $k$ neighbors, meaning that exists a length $k$ path from node $v$ to node $u$. ${\alpha}$ is an attenuation factor that discounts the effect of a degree $k$ neighbor as $k$ grows. 
+
+This can be considered an extended version of the degree centrality policy which only accounts for the immediate - i.e. degree 1 - neighbors for each node; instead, Katz centrality also accounts for the influence of all nodes within distance $K$. Furthermore, note that node $u$ may be node $v$'s degree $k$ neighbor for multiple values of $k$. In this case, Katz centrality accounts for multiple paths between the two nodes.
+
+To accommodate our model, however, we make one alteration to this measure. Instead of having a binary degree $k$ adjacency matrix, where $(A_k)_{v, u}$ is assigned 1 if $v$ and $u$ are degree $k$ neighbors and $0$ otherwise, we differentiate when the node $u$ is a positive or a negative target node. More specifically, our algorithm generates degree $k$ adjacency matrices $A^*_k$ such that:
+
+\begin{equation*}
+(A^*_k)_{v, u} = \begin{cases}
+1 &\text{$v$ and $u$ are degree $k$ neighbors and $v \in V_\theta^+$}\\
+-1 &\text{$v$ and $u$ are degree $k$ neighbors and $v \in V_\theta^-$}\\
+0 &\text{otherwise}
+\end{cases}
+\end{equation*}
+
+Furthermore, we choose $\alpha$ to be $p$, the propagation probability that we impose on all the edges. For an immediately adjancent pair of nodes $u \in V_\theta^+$ and $v \in V_\theta^+$, the probability that $v$ activates $u$ is p. For a pair of degree $k$ nodes $u$ and $v$, both in $V_\theta^+$, the probability that one activates the other via a particular length $k$ path is $p^k$. By setting the attenuation factor as $p$, we attempt to capture node $u$'s influences on node $v$ via length $k$ paths for multiple $k$'s.
+
+Finally, we consider the parameter $K$. $K$ indicates the greatest degree neighbor we take into account when computing the centrality of a node. Greater values of $K$ lets us take into account a greater number paths with different lengths between any pair of nodes. A short analysis of our sample graph revealed that most pairs of nodes have a shortest paths of length at most 5, meaning that setting $K=5$ allows us to account for the influence of most nodes in the graph when computing the centrality of the node of interest. While greater values of $K$ may provide us greater insight, the computational complexity of computing Katz centrality grows linearly with $K$; therefore we choose $K=5$ for our algorithm.
+
+\textit{Budgeted:}
+For the budgeted case, this policy selects node $v^*$ such that
+
+\begin{equation}
+v^* = \text{arg} \max_v \sum_{k=1}^{K=5} \sum_{u \neq v} {p}^k (A^*_k)_{v, u}
+\end{equation}
+
+\textit{Unbudgeted:}
+For the budgeted case, we select $(1-p) \cdot |V_\theta^+|$ nodes with the greatest values of Katz centrality describe above in equation 12.
+
+This policy is another example of a complex policy, that utilizes the distance metric and also accounts for both the positive and negative nodes.
 
